@@ -1,5 +1,5 @@
   
- ![Image](mlops.jpg) 
+ ![MLOps](images/mlops.jpg)
   
   
   ## Índice de contenidos
