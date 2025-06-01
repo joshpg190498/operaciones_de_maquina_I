@@ -1,4 +1,7 @@
   
+ ![Image](mlops.jpg) 
+  
+  
   ## Índice de contenidos
 - [Proyecto Final - MLOps | Predicción de Ingresos con Census Income](#proyecto-final---mlops--predicción-de-ingresos-con-census-income)
   - [Descripción del Proyecto](#descripción-del-proyecto)
