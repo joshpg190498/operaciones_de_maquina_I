@@ -82,15 +82,18 @@ El proyecto integra:
 .
 ├── airflow/
 │   ├── dags/
-│   └── config/
+│   └── secrets/
+├── app/│
 ├── dockerfiles/
 │   ├── airflow/
-│   ├── mlflow/
-│   └── fastapi/
+│   ├── fastapi/
+│   └── mlflow/
+│   └── postgres/
+├── notebooks
 ├── .env
 ├── docker-compose.yml
 ├── README.md
-└── requirements.txt
+
 ```
 
 ---
