@@ -1,7 +1,31 @@
-# 🧠 Operaciones de Máquina I - CEIA
+# Proyecto Final - MLOps | Predicción de Ingresos con Census Income
 
-Este proyecto corresponde al trabajo final de la materia **Operaciones de Máquina I** del posgrado en Inteligencia Artificial (CEIA - UBA).  
-El objetivo fue construir un pipeline MLOps completo para predecir ingresos utilizando el dataset **Census Income**.
+Este repositorio contiene el desarrollo de un proyecto completo de **Machine Learning Operations (MLOps)** cuyo objetivo fue diseñar, implementar y desplegar un pipeline automatizado para la predicción de ingresos individuales utilizando el dataset **Census Income**.  
+
+El proyecto integró las mejores prácticas de MLOps y permitió orquestar el flujo completo del ciclo de vida de un modelo de machine learning: desde el preprocesamiento de los datos, el entrenamiento del modelo, su evaluación, hasta el registro, despliegue y disponibilización mediante una API.
+
+Para lograr esto, se utilizaron tecnologías y servicios modernos que permiten escalar y automatizar cada etapa del proceso:
+- **Apache Airflow** para la orquestación del pipeline de entrenamiento.
+- **PostgreSQL** como base de datos estructurada.
+- **MinIO** como sistema de almacenamiento de objetos para los datos y modelos.
+- **MLflow** para el tracking, versionado y registro del modelo entrenado.
+- **FastAPI** para servir el modelo como API REST y exponer predicciones en tiempo real.
+
+---
+
+## Índice de Contenidos
+
+- [ Descripción del Proyecto](#-descripción-del-proyecto)
+- [ Objetivo](#-objetivo)
+- [ Servicios y tecnologías](#-servicios-y-tecnologías)
+- [ Estructura del Proyecto](#-estructura-del-proyecto)
+- [ Flujo de Trabajo](#-flujo-de-trabajo)
+- [ Estructura del Proyecto](#-estructura-del-proyecto)
+- [ Despliegue de la API](#-despliegue-de-la-api)
+- [ Cómo levantar el proyecto](#-como-levantar-el-proyecto)
+- [ Dataset](#-dataset)
+- [ Integrantes del equipo](#-integrantes-del-equipo)
+- [ Recursos útiles](#-recursos-útiles)
 
 ---
 
@@ -19,14 +43,27 @@ Se diseñó una solución de aprendizaje automático que incluye:
 
 ---
 
-##  Herramientas y Tecnologías
+## Objetivo
+
+Construir un pipeline de **MLOps** robusto, reproducible y automatizado que permita gestionar de manera eficiente todo el ciclo de vida de un modelo de machine learning, desde la ingestión de datos hasta su inferencia en producción.  
+El proyecto integra:
+
+- **Orquestación de tareas** con Apache Airflow.
+- **Persistencia** de datos estructurados con PostgreSQL.
+- **Almacenamiento distribuido** de archivos y datasets con MinIO.
+- **Tracking y registro de experimentos** mediante MLflow.
+- **Despliegue del modelo** en una API REST construida con FastAPI.
+
+---
+
+##  Servicios y tecnologías
 
 - **Airflow**: Orquestación de los flujos de trabajo.
 - **MLflow**: Tracking, registro y gestión de modelos.
 - **MinIO (S3)**: Almacenamiento de datasets y artefactos.
 - **PostgreSQL**: Base de datos para MLflow.
-- **Docker Compose**: Infraestructura contenedorizada.
 - **FastAPI**: API REST para predicciones.
+- **Docker Compose**: Infraestructura contenedorizada.
 - **Scikit-learn**: Modelado y evaluación.
 
 ---
@@ -41,7 +78,7 @@ Se diseñó una solución de aprendizaje automático que incluye:
 
 ---
 
-##  Estructura del Repositorio
+##  Estructura del Proyecto
 
 ```
 .
@@ -57,6 +94,13 @@ Se diseñó una solución de aprendizaje automático que incluye:
 ├── README.md
 └── requirements.txt
 ```
+
+---
+
+## Despliegue de la API
+
+El modelo entrenado se expone mediante una API REST construida con **FastAPI**, la cual permite enviar datos y recibir una predicción en tiempo real.  
+El servicio puede ejecutarse mediante Docker Compose.
 
 ---
 
