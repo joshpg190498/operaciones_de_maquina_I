@@ -13,6 +13,7 @@
   - [Cómo levantar el proyecto](#cómo-levantar-el-proyecto)
   - [Dataset](#dataset)
   - [Integrantes del equipo](#integrantes-del-equipo)
+  - [Datos](#datos)
   - [Recursos útiles](#recursos-útiles)
   
 # Proyecto Final - MLOps | Predicción de Ingresos con Census Income
@@ -136,6 +137,25 @@ Se utilizó el [Census Income Dataset](https://www.kaggle.com/datasets/tawfikelm
 | Mariano Campos          | lmarianocampos@gmail.com  |
 | Juan Cruz Ojeda         | ojedajuancz@gmail.com     |
 | Jose Luis Perez Galindo | joseperez190498@gmail.com |
+
+---
+
+##  Datos
+- **Levantar todos los servicios:**
+  - docker compose --profile all up --build
+
+- **Airflow**:
+    - http://localhost:8080/
+    - user: airflow
+    - pass: airflow
+
+- **MLflow**
+  - http://localhost:9001
+  
+- **MinIO**
+    - http://localhost:9001/
+    - user: minio
+    - pass: minio123
 
 ---
 
