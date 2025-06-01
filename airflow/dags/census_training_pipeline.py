@@ -22,7 +22,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-#eétricas
+#métricas
 from sklearn.metrics import accuracy_score
 
 
@@ -99,7 +99,7 @@ def census_training_pipeline():
             str.lower()
         )
 
-        # Podemos observar un '?'. Esto representa valores faltantes. Se lo va a reemplazar aquellos ? por NaN
+        # Podemos observar un '?'. Esto representa valores faltantes. Se lo va a reemplazar aquellos ? por nan
         df.replace("?", np.nan, inplace=True)
 
         # Se remueven los espacios en blancos de los valores
