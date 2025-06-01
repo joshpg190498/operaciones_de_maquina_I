@@ -83,7 +83,7 @@ El proyecto integra:
 ├── airflow/
 │   ├── dags/
 │   └── secrets/
-├── app/│
+├── app/
 ├── dockerfiles/
 │   ├── airflow/
 │   ├── fastapi/
