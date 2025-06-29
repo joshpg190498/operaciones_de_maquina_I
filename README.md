@@ -120,6 +120,10 @@ cd operaciones_de_maquina_I
 # Levantar todos los servicios
 docker compose --profile all up --build
 ```
+Luego que el servicio de MinIO inició:
+  - Ingresar al servicio web desplegado en el puerto 9001, con usuario y contraceña
+  - Crear el bucket "datasets"
+  - Subir los datasets adult.csv y adult.test.csv
 
 ---
 
@@ -156,6 +160,9 @@ Se utilizó el [Census Income Dataset](https://www.kaggle.com/datasets/tawfikelm
     - http://localhost:9001/
     - user: minio
     - pass: minio123
+
+- **FastAPI**
+    - http://localhost:8800/
 
 ---
 
