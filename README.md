@@ -79,6 +79,8 @@ El proyecto integra:
 4. El modelo es registrado en MLflow con alias `Champion`.
 5. Se expone la predicción mediante FastAPI consumiendo el modelo desde MLflow.
 
+![Diagrama de flujo](images/flujo_de_trabajo.png)
+
 ---
 
 ##  Estructura del Proyecto
@@ -94,7 +96,7 @@ El proyecto integra:
 │   ├── routers/
 │   └── services/  
 ├── images/
-├── streamlite_app/
+├── streamlit_app/
 ├── dockerfiles/
 │   ├── airflow/
 │   ├── fastapi/
@@ -182,7 +184,7 @@ Este proyecto fue probado exitosamente en el siguiente entorno operativo:
 
   - http://localhost:8800/
     
-- **StreamLite**
+- **StreamLit**
 
   - http://localhost:8501/
 
