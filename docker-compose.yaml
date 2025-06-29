@@ -26,6 +26,7 @@ x-airflow-common: &airflow-common
     - ${AIRFLOW_PROJ_DIR:-./airflow}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-./airflow}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-./airflow}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-./airflow}/datasets:/opt/airflow/datasets
     - ${AIRFLOW_PROJ_DIR:-./airflow}/secrets:/opt/secrets
     - /var/run/docker.sock:/var/run/docker.sock 
   networks:
@@ -181,8 +182,8 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: sales-api:latest
-    container_name: sales_api
+    image: income-api:latest
+    container_name: income_api
     environment:
       - DATABASE_URL=sqlite:///./data/history.db
       - MLFLOW_TRACKING_URI=http://mlflow:5000
@@ -311,8 +312,8 @@ services:
           echo "   https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#before-you-begin"
           echo
         fi
-        mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}" /sources/{logs,dags,plugins}
+        mkdir -p /sources/logs /sources/dags /sources/plugins /sources/datasets
+        chown -R "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}" /sources/{logs,dags,plugins,datasets}
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
     environment:

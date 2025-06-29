@@ -42,10 +42,11 @@ default_args = {
 def census_training_pipeline():
 
     @task()
-    def load_and_combine_data_from_s3(bucket_name: str, train_key: str, test_key: str) -> str:
+
+    def download_dataset_from_s3(bucket_name: str, train_key: str) -> str:
 
         """
-        Descarga y combina archivos CSV desde un bucket S3 (como MinIO) y guarda el resultado localmente.
+        Descarga el CSV combinado desde un bucket S3 (como MinIO) y guarda el resultado localmente.
         """
 
         s3 = boto3.client(
@@ -56,30 +57,14 @@ def census_training_pipeline():
         )
 
         # Rutas locales temporales
-        os.makedirs("/tmp/data", exist_ok=True)
-        train_path = "/tmp/data/adult.csv"
-        test_path = "/tmp/data/adult.test.csv"
+        data_folder = '/tmp/data'
+        os.makedirs(data_folder, exist_ok=True)
+        train_path = os.path.join(data_folder, train_key)
 
         # Descargar archivos
         s3.download_file(bucket_name, train_key, train_path)
-        s3.download_file(bucket_name, test_key, test_path)
 
-        # Leer archivos correctamente
-        df_train = pd.read_csv(train_path)
-        df_test = pd.read_csv(test_path)
-
-        # Se obtiene los headers de train dataset
-        df_test.columns = df_train.columns.tolist()
-
-        # Unir datasets
-        df = pd.concat([df_train, df_test], axis=0)
-
-        # Guardar resultado combinado
-        output_path = "/tmp/adult_combined.csv"
-        df.to_csv(output_path, index=False)
-
-        print("Columnas finales:", df.columns.tolist())
-        return output_path
+        return train_path
 
     @task()
     def eda(path: str) -> str:
@@ -253,7 +238,7 @@ def census_training_pipeline():
             print(f"Modelo versión {latest_version} asignado a 'Production' y alias 'Champion'")                   
 
     # Orquestación
-    combined = load_and_combine_data_from_s3("data", "adult.csv", "adult.test.csv")
+    combined = download_dataset_from_s3("data", "adult_combined.csv")
     clean = eda(combined)
     preprocess_training(clean)
 
