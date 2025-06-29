@@ -24,6 +24,11 @@ def deploy_model_api():
 
     @task()
     def promote_to_champion(model_name:str="Census_Income_Prediction"):
+        """
+        Promociona la última versión registrada de un modelo en MLflow al entorno de 'Producción'
+        y le asigna el alias 'Champion'. Esto permite identificar la versión actual considerada
+        como la mejor y lista para ser utilizada en entornos productivos.
+        """
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
         client = MlflowClient()
         latest = client.get_latest_versions(model_name, stages=[]) [-1]

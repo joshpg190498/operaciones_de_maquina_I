@@ -80,6 +80,11 @@ def root():
 
 @app.post("/predict")
 def predict(data: CensusFeatures):
+    """
+    Realiza una predicción utilizando el modelo cargado a partir de los datos recibidos 
+    en el cuerpo de la solicitud. Retorna la clase predicha y la probabilidad asociada 
+    de que el ingreso sea superior a 50K.
+    """
     try:
         X = payload_to_dataframe(data.model_dump())
         pred_class = int(pipeline.predict(X)[0])

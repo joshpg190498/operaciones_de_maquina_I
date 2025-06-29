@@ -9,7 +9,7 @@ from api.routers.history import router as history_router
 
 # --- Inicialización de la aplicación FastAPI ---
 app = FastAPI(
-    title="API de Predicción de Ventas",
+    title="API de Predicción de Ganancias",
     version="1.1.0",
 )
 

@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 
 
 # Configuración de la página y API
-st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
+st.set_page_config(page_title="Dashboard de Ganancias", layout="wide")
 API_URL = "http://api:8000"
 
 # Mapeo de niveles educativos
@@ -112,9 +112,9 @@ def docs_page():
 
 # Definición de páginas usando st.navigation (Streamlit 1.45)
 pages = [
-    st.Page(predictions_page, title="📈 Predictions"),
-    st.Page(history_page,    title="📜 History"),
-    st.Page(docs_page,       title="📚 Docs")
+    st.Page(predictions_page, title="📈 Predicciones"),
+    st.Page(history_page,    title="📜 Historial"),
+    st.Page(docs_page,       title="📚 Documentación API")
 ]
 
 def main():

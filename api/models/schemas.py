@@ -4,6 +4,7 @@ from typing import Any, Dict
 from pydantic import BaseModel, Field
 
 class CensusFeaturesInput(BaseModel):
+    """Esquema de entrada de la predicción."""
     age: int = 32
     workclass: str = "Private"
     educationnum: int = 13
@@ -30,4 +31,3 @@ class HistoryEntry(BaseModel):
 
     class Config:
         orm_mode = True
-        #from_attributes = True

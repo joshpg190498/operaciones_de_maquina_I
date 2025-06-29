@@ -195,10 +195,6 @@ def census_training_pipeline():
         mlflow.set_tracking_uri("http://mlflow:5000")
         mlflow.set_experiment("Census_Income_Prediction")
 
-       # with mlflow.start_run():
-       #     mlflow.sklearn.log_model(rf_model, "random_forest_model")
-       #     mlflow.log_metric("accuracy", acc)
-
         with mlflow.start_run() as run:
             # Log parámetros
             mlflow.log_param("model_type", "RandomForest")
