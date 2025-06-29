@@ -120,11 +120,6 @@ cd operaciones_de_maquina_I
 # Levantar todos los servicios
 docker compose --profile all up --build
 ```
-Luego que el servicio de MinIO inició:
-  - Ingresar al servicio web desplegado en el puerto 9001, con usuario y contraceña
-  - Crear el bucket "datasets"
-  - Subir los datasets adult.csv y adult.test.csv
-
 ---
 
 ## Dataset

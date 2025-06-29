@@ -10,7 +10,7 @@ warnings.filterwarnings('ignore')
 
 
 @dag(
-    dag_id='load_dataset_pipeline',
+    dag_id='upload_dataset',
     description='DAG de carga de dataset al bucket',
     schedule_interval="@once",
     catchup=False,
