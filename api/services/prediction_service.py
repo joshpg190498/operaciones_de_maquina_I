@@ -10,7 +10,6 @@ from api.services.history_service import log_prediction
 
 
 # --- URI fija al modelo en producción ---
-#MLFLOW_MODEL_URI = "models:/prediccion_ventas_model_prod/1"
 MLFLOW_MODEL_URI = "models:/Census_Income_Prediction@Champion"
 
 mlflow.set_tracking_uri("http://mlflow:5000")
@@ -37,7 +36,7 @@ def payload_to_dataframe(payload: dict) -> pd.DataFrame:
 def predict_income(
     input_data: CensusFeaturesInput
 ) -> float:
-    """Obtiene la predicción de ventas a partir de la entrada."""
+    """Obtiene la predicción de ganancia a partir de la entrada."""
     try:
         model = mlflow.sklearn.load_model(MLFLOW_MODEL_URI)
     except RestException:
