@@ -156,7 +156,7 @@ Se utiliza el [Census Income Dataset](https://www.kaggle.com/datasets/tawfikelme
 
 ## Sistemas Operativos probados
 
-Este proyecto fue probado exitosamente en el siguiente entorno operativo:
+Este proyecto fue probado exitosamente en los siguientes entornos operativos:
 
    - Windows 10 versión 22H2(compilación 19045).
    - Ubuntu 22.04.5 LTS (Jammy Jellyfish).
