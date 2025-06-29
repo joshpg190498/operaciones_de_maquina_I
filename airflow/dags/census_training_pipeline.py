@@ -253,7 +253,7 @@ def census_training_pipeline():
             print(f"Modelo versión {latest_version} asignado a 'Production' y alias 'Champion'")                   
 
     # Orquestación
-    combined = load_and_combine_data_from_s3("datasets", "adult.csv", "adult.test.csv")
+    combined = load_and_combine_data_from_s3("data", "adult.csv", "adult.test.csv")
     clean = eda(combined)
     preprocess_training(clean)
 
