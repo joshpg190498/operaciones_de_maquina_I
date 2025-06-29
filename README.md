@@ -9,11 +9,13 @@
   - [Flujo de Trabajo](#flujo-de-trabajo)
   - [Estructura del Proyecto](#estructura-del-proyecto)
   - [Despliegue de la API](#despliegue-de-la-api)
-  - [Cómo levantar el proyecto](#cómo-levantar-el-proyecto)
+  - [Cómo poner en marcha el proyecto](#cómo-poner-en-marcha-el-proyecto)
+  - [Manual de uso](#manual-de-uso)
   - [Dataset](#dataset)
-  - [Integrantes del equipo](#integrantes-del-equipo)
+  - [Sistemas Operativos probados](#sistemas-operativos-probados)
   - [Datos](#datos)
   - [Recursos útiles](#recursos-útiles)
+  - [Integrantes del equipo](#integrantes-del-equipo)
   
 # Proyecto Final - MLOps | Predicción de Ingresos con Census Income
 
@@ -134,9 +136,9 @@ docker compose --profile all up --build
 ## Manual de uso
 
 1. Ingresar a Airflow y ejecutar los dags con el siguiente orden:
-	a. upload_dataset
-	b. census_training_pipeline
-	c. deploy_model_api
+   - a. `upload_dataset`
+   - b. `census_training_pipeline`
+   - c. `deploy_model_api`
 2. Ingresar a la interfaz web.
 3. Seleccionar las características del individuo para la realizar la predicción.  
 4. Se puede consultar en un registro histórico sobre las predcciones realizadas. 
