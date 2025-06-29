@@ -30,7 +30,7 @@ education_map = {
 }
 
 def predictions_page():
-    st.header("📊 Predicción de ingresos del Censo")
+    st.header("📊 Predicción de ingresos")
 
     with st.form("census_form"):
         col1, col2 = st.columns(2)
