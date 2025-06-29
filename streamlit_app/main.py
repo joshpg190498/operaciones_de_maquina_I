@@ -9,6 +9,25 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
 API_URL = "http://api:8000"
 
+# Mapeo de niveles educativos
+education_map = {
+    "Preschool": 1,
+    "1st-4th": 2,
+    "5th-6th": 3,
+    "7th-8th": 4,
+    "9th": 5,
+    "10th": 6,
+    "11th": 7,
+    "12th": 8,
+    "HS-grad": 9,
+    "Some-college": 10,
+    "Assoc-voc": 11,
+    "Assoc-acdm": 12,
+    "Bachelors": 13,
+    "Masters": 14,
+    "Doctorate": 15,
+    "Prof-school": 16
+}
 
 def predictions_page():
     st.header("📊 Predicción de ingresos del Censo")
@@ -22,7 +41,8 @@ def predictions_page():
             "Local-gov", "State-gov", "Without-pay", "Never-worked"
         ])
 
-        educationnum = col1.number_input("Nivel educativo (número)", min_value=1, max_value=20, value=13)
+        education_level = col1.selectbox("Nivel educativo", list(education_map.keys()))
+
         marital_status = col2.selectbox("Estado civil", [
             "Married-civ-spouse", "Divorced", "Never-married", "Separated", "Widowed", "Married-spouse-absent", "Married-AF-spouse"
         ])
@@ -55,7 +75,7 @@ def predictions_page():
         payload = {
             "age": age,
             "workclass": workclass,
-            "educationnum": educationnum,
+            "educationnum": education_map[education_level],
             "marital_status": marital_status,
             "occupation": occupation,
             "relationship": relationship,

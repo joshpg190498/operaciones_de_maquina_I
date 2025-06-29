@@ -24,7 +24,8 @@ class HistoryEntry(BaseModel):
     """Esquema para una entrada del historial de predicciones."""
     id: int
     input_data: Dict[str, Any]
-    prediction: float
+    prediction: int
+    proba: float
     timestamp: datetime
 
     class Config:

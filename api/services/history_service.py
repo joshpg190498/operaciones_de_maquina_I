@@ -10,7 +10,7 @@ from api.models.schemas import CensusFeaturesInput
 # Crear tablas al iniciar el servicio
 Base.metadata.create_all(bind=engine)
 
-def log_prediction(input_data: Dict[str, Any], prediction: float) -> PredictionHistory:
+def log_prediction(input_data: Dict[str, Any], prediction: float, proba: float) -> PredictionHistory:
     """Registra una predicción en el historial."""
     if isinstance(input_data, CensusFeaturesInput):
         json_data = input_data.dict(by_alias=True)
@@ -21,7 +21,8 @@ def log_prediction(input_data: Dict[str, Any], prediction: float) -> PredictionH
         db = SessionLocal()
         record = PredictionHistory(
             input_data=json_data,
-            prediction=prediction
+            prediction=prediction,
+            proba=proba
         )
         db.add(record)
         db.commit()

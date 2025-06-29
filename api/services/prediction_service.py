@@ -6,6 +6,7 @@ from mlflow.exceptions import RestException
 import pandas as pd
 from api.models.schemas import CensusFeaturesInput
 from fastapi import HTTPException
+from api.services.history_service import log_prediction
 
 
 # --- URI fija al modelo en producción ---
@@ -33,7 +34,7 @@ def payload_to_dataframe(payload: dict) -> pd.DataFrame:
     return pd.DataFrame([renamed])
 
 
-def predict_sales(
+def predict_income(
     input_data: CensusFeaturesInput
 ) -> float:
     """Obtiene la predicción de ventas a partir de la entrada."""
@@ -45,7 +46,13 @@ def predict_sales(
     X = payload_to_dataframe(input_data.model_dump())
     pred_class = int(model.predict(X)[0])
     proba_1 = float(model.predict_proba(X)[0][1])  # Probabilidad de clase >50K
+    proba_rounded = round(proba_1, 4)
+    
+    try:
+        log_prediction(input_data, pred_class, proba_rounded)
+    except Exception as e:
+        print(f"Error loggeando log: {e}")
 
-    return {"prediction": pred_class, "proba": round(proba_1, 4)}
+    return {"prediction": pred_class, "proba": proba_rounded}
 
 
