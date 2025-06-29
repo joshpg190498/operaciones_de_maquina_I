@@ -184,7 +184,7 @@ Este proyecto fue probado exitosamente en los siguientes entornos operativos:
 
 - **FastAPI**
 
-  - http://localhost:8800/
+  - http://localhost:8800/docs
     
 - **StreamLit**
 
