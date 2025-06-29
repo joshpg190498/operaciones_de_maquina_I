@@ -1,16 +1,20 @@
 FROM python:3.11-slim
 
+# ≡ 1. Configuración básica
+#ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copiar e instalar dependencias
+# ≡ 2. Dependencias
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código (incluye app.py)
-COPY . .
+# ≡ 3. Copiar el código (¡sin modelo local!)
+COPY app.py .
 
-# Exponer puerto
-EXPOSE 8000
+# ≡ 4. Puerto coherente con docker-compose.yml
+EXPOSE 8800
 
-# Comando por defecto
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# ≡ 5. CMD
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8800"]

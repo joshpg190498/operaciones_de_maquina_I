@@ -150,7 +150,7 @@ Se utilizó el [Census Income Dataset](https://www.kaggle.com/datasets/tawfikelm
     - pass: airflow
 
 - **MLflow**
-  - http://localhost:9001
+  - http://localhost:5000
   
 - **MinIO**
     - http://localhost:9001/

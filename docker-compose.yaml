@@ -10,7 +10,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${PG_USER:-airflow}:${PG_PASSWORD:-airflow}@postgres/${PG_DATABASE:-airflow}
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'  # Change to 'false' to remove the tutorials and examples
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'  # Change to 'false' to remove the tutorials and examples
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.session'
     AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'True'
@@ -20,12 +20,14 @@ x-airflow-common: &airflow-common
     AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_ACCESS_KEY:-minio123}
     AWS_ENDPOINT_URL_S3: http://s3:9000
     MLFLOW_S3_ENDPOINT_URL: http://s3:9000
+    MLFLOW_TRACKING_URI: http://mlflow:5000 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-./airflow}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-./airflow}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-./airflow}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-./airflow}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-./airflow}/secrets:/opt/secrets
+    - /var/run/docker.sock:/var/run/docker.sock 
   networks:
     - frontend
     - backend
@@ -163,6 +165,7 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - MODEL_NAME=demo_regresion
       - MODEL_STAGE=None
+      - MODEL_URI=models:/Census_Income_Prediction@Champion
     command: >
       uvicorn app:app 
       --host 0.0.0.0
@@ -219,23 +222,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
-  # it should not be necessary for a basic implementation
-  #airflow-triggerer:
-  #  <<: *airflow-common
-  #  container_name: airflow_triggerer
-  #  command: triggerer
-  #  healthcheck:
-  #    test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
-  #    interval: 60s
-  #    timeout: 10s
-  #    retries: 5
-  #    start_period: 30s
-  #  restart: always
-  #  depends_on:
-  #    <<: *airflow-common-depends-on
-  #    airflow-init:
-  #      condition: service_completed_successfully
 
   airflow-init: # Inicializar la base de datos (airflow db init)
                 # Crear el usuario admin en la interfaz web

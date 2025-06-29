@@ -1,29 +1,20 @@
 import os
 import pandas as pd
+import numpy as np
 import boto3
 import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score
-
-import pandas as pd
-import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, classification_report
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
-
-from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-
-#métricas
-from sklearn.metrics import accuracy_score
 
 
 import warnings
@@ -52,6 +43,11 @@ def census_training_pipeline():
 
     @task()
     def load_and_combine_data_from_s3(bucket_name: str, train_key: str, test_key: str) -> str:
+
+        """
+        Descarga y combina archivos CSV desde un bucket S3 (como MinIO) y guarda el resultado localmente.
+        """
+
         s3 = boto3.client(
             's3',
             endpoint_url=os.getenv("AWS_ENDPOINT_URL_S3", "http://s3:9000"),
@@ -70,16 +66,13 @@ def census_training_pipeline():
 
         # Leer archivos correctamente
         df_train = pd.read_csv(train_path)
+        df_test = pd.read_csv(test_path)
 
-        # Leer test con las mismas columnas
-        df_test = pd.read_csv(test_path, skiprows=1, header=None)
-        df_test.columns = df_train.columns
+        # Se obtiene los headers de train dataset
+        df_test.columns = df_train.columns.tolist()
 
         # Unir datasets
-        df = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
-
-        # Limpieza de columnas si tienen espacios
-        df.columns = df.columns.str.strip()
+        df = pd.concat([df_train, df_test], axis=0)
 
         # Guardar resultado combinado
         output_path = "/tmp/adult_combined.csv"
@@ -89,7 +82,12 @@ def census_training_pipeline():
         return output_path
 
     @task()
-    def eda(path: str):
+    def eda(path: str) -> str:
+
+        """
+        Limpia, normaliza e imputa valores faltantes en el dataset de adultos. Guarda el resultado localmente.
+        """
+
         df = pd.read_csv(path)
 
         # Se estandariza los nombres de las columnas a minusculas y se limpian espacios.
@@ -99,12 +97,12 @@ def census_training_pipeline():
             str.lower()
         )
 
-        # Podemos observar un '?'. Esto representa valores faltantes. Se lo va a reemplazar aquellos ? por nan
-        df.replace("?", np.nan, inplace=True)
-
         # Se remueven los espacios en blancos de los valores
         for col in df.select_dtypes(include='object').columns:
             df[col] = df[col].str.strip()
+
+        # Podemos observar un '?'. Esto representa valores faltantes. Se lo va a reemplazar aquellos ? por nan
+        df.replace("?", np.nan, inplace=True)
 
         # Se procede con la imputación. Para este caso en particular y debido a que solo hay 10 valores faltantes. Se decile imputar una categoría artificial como 'No-occupation' para los casos que 'workclass' = 'Never-worked'
         df.loc[
@@ -123,11 +121,9 @@ def census_training_pipeline():
         # Imputación del valor 'most_common_country' a los valores NaN
         df['native country'].fillna(most_common_country, inplace=True)
 
-        print("Columnas disponibles:", df.columns.tolist())
 
         # Eliminar columnas innecesarias
-        #df.drop(columns=["final weight", "educationnum", "capital gain", "capital loss"], inplace=True)
-        df.drop(columns=["educationnum", "capital gain", "capital loss"], inplace=True)
+        df.drop(columns=["capital gain", "capital loss"], inplace=True)
 
         # Variable objetivo "income"
         df['income'] = df['income'].str.strip().str.replace('.', '', regex=False)
@@ -144,68 +140,65 @@ def census_training_pipeline():
         return clean_path
 
     @task()
-    def preprocess(path: str) -> str:
+    def preprocess_training(path: str):
+
+        """
+        Entrena un modelo Random Forest con los datos procesados, evalúa su desempeño y lo registra en MLflow.
+        """
         df = pd.read_csv(path)
-        def label_encoder(dataframe, binary_col):
-            labelencoder = LabelEncoder()
-            dataframe[binary_col] = labelencoder.fit_transform(dataframe[binary_col])
-            return dataframe
 
-        for col in ['income', 'gender',]:
-            df = label_encoder(df, col)
+        # ----------------------------- 1. DATOS ------------------------------ #
+        y   = df["income"].map({ "<=50K": 0, ">50K": 1 })       # target binario
+        X   = df.drop(columns="income")                         # features
 
-        def one_hot_encoder(dataframe, categorical_cols, drop_first=True):
-            encoded_data = dataframe.copy() 
-            
-            for col in categorical_cols:
-                dumm = pd.get_dummies(dataframe[col], prefix=col, dtype=int, drop_first=drop_first)
-                del encoded_data[col]
-                encoded_data = pd.concat([encoded_data, dumm], axis=1)
-            
-            return encoded_data
+        num_cols = ["age", "educationnum", "hours per week"]
+        bin_cols = ["gender"]
+        cat_cols = ["workclass", "marital status", "occupation",
+                    "relationship", "race", "native country"]
 
-        df = one_hot_encoder(df, ['workclass', 'marital status', 'occupation', 'relationship', 'race','native country'])
-
-        processed_path = "/tmp/data/adult_processed.csv"
-        df.to_csv(processed_path, index=False)
-        return processed_path        
-
-    @task()
-    def training(path: str):
-        df = pd.read_csv(path)
-        # Preparar X e y
-        X = df.drop(columns='income')   # Features
-        y = df['income']                # Target
-
-        # Codificar variables categóricas
-        X = pd.get_dummies(X, drop_first=True)
-
-        # Convertir a categorías binarias
-        #df["income"] = df["income"].apply(lambda x: 1 if ">50K" in x else 0)
-
-        # Dividir en entrenamiento y test
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, stratify=y
+        # ---------------------- 2. PREPROCESADOR ----------------------------- #
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("num", "passthrough", num_cols),
+                ("bin", OrdinalEncoder(categories=[["Female", "Male"]]), bin_cols),
+                ("cat", OneHotEncoder(
+                    drop="first",           # ≃ tu drop_first=True
+                    handle_unknown="ignore",
+                    sparse_output=False
+                ), cat_cols),
+            ],
+            remainder="drop"
         )
 
-        # Alinear columnas de test con entrenamiento
-        X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
-
-        # Instanciar el modelo Random Forest
-        rf_model = RandomForestClassifier(
+        # ---------------------- 3. MODELO COMPLETO --------------------------- #
+        rf_params = dict(
             max_depth=40,
-            max_features='sqrt',
+            max_features="sqrt",
             min_samples_leaf=40,
             min_samples_split=5,
             n_estimators=100,
-            random_state=42
+            random_state=42,
+            class_weight="balanced",
         )
 
-        # Entrenar el modelo
-        rf_model.fit(X_train, y_train)
+        pipeline = Pipeline([
+            ("prep", preprocessor),
+            ("clf",  RandomForestClassifier(**rf_params)),
+        ])
 
-        # Predicciones en test
-        y_pred = rf_model.predict(X_test)
+        # ---------------------- 4. ENTRENAR / VALIDAR ------------------------ #
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.20, random_state=42, stratify=y
+        )
+
+        pipeline.fit(X_train, y_train)
+
+        print("Accuracy entrenamiento :", round(pipeline.score(X_train, y_train)*100, 2), "%")
+        print("Accuracy test          :", round(pipeline.score(X_test,  y_test)*100, 2), "%")
+
+        y_pred = pipeline.predict(X_test)
+        print("\nReporte de clasificación:\n", classification_report(y_test, y_pred))
+
 
         acc = accuracy_score(y_test, y_pred)
         report = classification_report(y_test, y_pred)
@@ -231,8 +224,8 @@ def census_training_pipeline():
 
             # Log del modelo y registro
             mlflow.sklearn.log_model(
-                rf_model,
-                artifact_path="model",
+                pipeline,
+                artifact_path="pipeline",
                 registered_model_name="Census_Income_Prediction"
             )
 
@@ -260,9 +253,8 @@ def census_training_pipeline():
             print(f"Modelo versión {latest_version} asignado a 'Production' y alias 'Champion'")                   
 
     # Orquestación
-    combined = load_and_combine_data_from_s3("datasets", "data/adult.csv", "data/adult.test.csv")
+    combined = load_and_combine_data_from_s3("datasets", "adult.csv", "adult.test.csv")
     clean = eda(combined)
-    processed = preprocess(clean)
-    training(processed)
+    preprocess_training(clean)
 
 dag = census_training_pipeline()
