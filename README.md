@@ -19,6 +19,8 @@
   
 # Proyecto Final - MLOps | Predicción de Ingresos con Census Income
 
+ ![Frontend](images/census_income.png)
+
 Este repositorio contiene el desarrollo de un proyecto completo de **Machine Learning Operations (MLOps)** cuyo objetivo fue diseñar, implementar y desplegar un pipeline automatizado para la predicción de ingresos individuales utilizando el dataset **Census Income**.  
 
 El proyecto integra las buenas prácticas de MLOps y permite orquestar el flujo completo del ciclo de vida de un modelo de machine learning: desde el preprocesamiento de los datos, el entrenamiento del modelo, su evaluación, hasta el registro, despliegue y disponibilidad mediante una API.
