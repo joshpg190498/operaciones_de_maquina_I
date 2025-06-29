@@ -23,6 +23,11 @@ def upload_dataset_pipeline():
 
     @task()
     def upload_dataset_to_s3():
+        """
+        Carga y combina los datasets de entrenamiento y prueba desde archivos CSV locales, 
+        unifica sus columnas, los concatena y los sube como un único archivo al bucket S3 
+        especificado.
+        """
         try:
             # Datasets iniciales
             datasets_path = '/opt/airflow/datasets'
